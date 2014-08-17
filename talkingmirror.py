@@ -39,14 +39,14 @@ def detect_and_draw(img, faceCascade):
     faces = cv.HaarDetectObjects(small_img, faceCascade, cv.CreateMemStorage(0),
             haar_scale, min_neighbors, haar_flags, min_size)
 
-    if faces:
-        for ((x, y, w, h), n) in faces:
-            # the input to cv.HaarDetectObjects was resized, so scale the
-            # bounding box of each face and convert it to two CvPoints
-            pt1 = (int(x * image_scale), int(y * image_scale))
-            pt2 = (int((x + w) * image_scale), int((y + h) * image_scale))
-            cv.Rectangle(img, pt1, pt2, cv.RGB(255, 0, 0), 3, 8, 0)
-            print "Face at: ", pt1[0], ",", pt2[0], "\t", pt1[1], ",", pt2[1]
+    # if faces:
+    #     for ((x, y, w, h), n) in faces:
+    #         # the input to cv.HaarDetectObjects was resized, so scale the
+    #         # bounding box of each face and convert it to two CvPoints
+    #         pt1 = (int(x * image_scale), int(y * image_scale))
+    #         pt2 = (int((x + w) * image_scale), int((y + h) * image_scale))
+    #         cv.Rectangle(img, pt1, pt2, cv.RGB(255, 0, 0), 3, 8, 0)
+    #         print "Face at: ", pt1[0], ",", pt2[0], "\t", pt1[1], ",", pt2[1]
 
     return True if faces else False
 
@@ -62,15 +62,15 @@ def random_sound():
 
 if __name__ == "__main__":
 
-    print "Press ESC to exit ..."
+    #print "Press ESC to exit ..."
 
     # create windows
-    cv.NamedWindow('Camera', cv.CV_WINDOW_AUTOSIZE)
+    #cv.NamedWindow('Camera', cv.CV_WINDOW_AUTOSIZE)
 
     # create capture device
     capture = cv.CreateCameraCapture(0) # assume we want first device
-    cv.SetCaptureProperty(capture, cv.CV_CAP_PROP_FRAME_WIDTH, 640)
-    cv.SetCaptureProperty(capture, cv.CV_CAP_PROP_FRAME_HEIGHT, 480)
+    cv.SetCaptureProperty(capture, cv.CV_CAP_PROP_FRAME_WIDTH, 320)
+    cv.SetCaptureProperty(capture, cv.CV_CAP_PROP_FRAME_HEIGHT, 240)
     faceCascade = cv.Load("face.xml")
     lastPlaybackTime = 0
 
@@ -86,9 +86,9 @@ if __name__ == "__main__":
         if frame is None:
             break
 
-        cv.Flip(frame, None, 1)
+        #cv.Flip(frame, None, 1)
         foundFace = detect_and_draw(frame, faceCascade)
-        cv.ShowImage('Camera', frame)
+        #cv.ShowImage('Camera', frame)
         if foundFace:
             if pygame.mixer.music.get_busy():
                 lastPlaybackTime = time.time()
@@ -99,9 +99,9 @@ if __name__ == "__main__":
 
        # time.sleep(0.1)
 
-        k = cv.WaitKey(100)
-
-        if k == 0x1b: # ESC
-            print 'ESC pressed. Exiting ...'
-            cv.DestroyWindow("Camera")  # This may not work on a Mac
-            break
+        # k = cv.WaitKey(100)
+        #
+        # if k == 0x1b: # ESC
+        #     print 'ESC pressed. Exiting ...'
+        #     cv.DestroyWindow("Camera")  # This may not work on a Mac
+        #     break
