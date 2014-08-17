@@ -1,12 +1,14 @@
 import cv2.cv as cv
 import sys
+import time
+import pygame
 
 # Parameters for haar detection
 # From the API:
-# The default parameters (scale_factor=2, min_neighbors=3, flags=0) are tuned 
-# for accurate yet slow object detection. For a faster operation on real video 
-# images the settings are: 
-# scale_factor=1.2, min_neighbors=2, flags=CV_HAAR_DO_CANNY_PRUNING, 
+# The default parameters (scale_factor=2, min_neighbors=3, flags=0) are tuned
+# for accurate yet slow object detection. For a faster operation on real video
+# images the settings are:
+# scale_factor=1.2, min_neighbors=2, flags=CV_HAAR_DO_CANNY_PRUNING,
 # min_size=<minimum possible face size
 
 min_size = (5,5)
@@ -33,7 +35,8 @@ def detect_and_draw(img, faceCascade):
 
     cv.EqualizeHist(small_img, small_img)
 
-    faces = cv.HaarDetectObjects(small_img, faceCascade, cv.CreateMemStorage(0), haar_scale, min_neighbors, haar_flags, min_size)
+    faces = cv.HaarDetectObjects(small_img, faceCascade, cv.CreateMemStorage(0),
+            haar_scale, min_neighbors, haar_flags, min_size)
 
     if faces:
         for ((x, y, w, h), n) in faces:
@@ -44,21 +47,45 @@ def detect_and_draw(img, faceCascade):
             cv.Rectangle(img, pt1, pt2, cv.RGB(255, 0, 0), 3, 8, 0)
             print "Face at: ", pt1[0], ",", pt2[0], "\t", pt1[1], ",", pt2[1]
 
-    cv.ShowImage('Camera', img)
+    return True if faces else False
 
 if __name__ == "__main__":
+
+    print "Press ESC to exit ..."
+
+    # create windows
     cv.NamedWindow('Camera', cv.CV_WINDOW_AUTOSIZE)
+
+    # create capture device
     capture = cv.CreateCameraCapture(0) # assume we want first device
-    cv.SetCaptureProperty(capture, cv.CV_CAP_PROP_FRAME_WIDTH, 320)
-    cv.SetCaptureProperty(capture, cv.CV_CAP_PROP_FRAME_HEIGHT, 240)
+    cv.SetCaptureProperty(capture, cv.CV_CAP_PROP_FRAME_WIDTH, 640)
+    cv.SetCaptureProperty(capture, cv.CV_CAP_PROP_FRAME_HEIGHT, 480)
     faceCascade = cv.Load("face.xml")
+
+    pygame.mixer.init()
+    pygame.mixer.music.load("birds.wav")
 
     if not capture:
         print "Error opening capture device"
         sys.exit(1)
 
     while True:
-        frame=cv.QueryFrame(capture)
-        detect_and_draw(frame, faceCascade)
+        frame = cv.QueryFrame(capture)
 
-        # time.sleep(0.1)
+        if frame is None:
+            break
+
+        cv.Flip(frame, None, 1)
+        foundFace = detect_and_draw(frame, faceCascade)
+        cv.ShowImage('Camera', frame)
+        if foundFace and pygame.mixer.music.get_busy() == False:
+            pygame.mixer.music.play()
+
+       # time.sleep(0.1)
+
+        k = cv.WaitKey(100)
+
+        if k == 0x1b: # ESC
+            print 'ESC pressed. Exiting ...'
+            cv.DestroyWindow("Camera")  # This may not work on a Mac
+            break
