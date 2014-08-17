@@ -72,6 +72,7 @@ if __name__ == "__main__":
     cv.SetCaptureProperty(capture, cv.CV_CAP_PROP_FRAME_WIDTH, 640)
     cv.SetCaptureProperty(capture, cv.CV_CAP_PROP_FRAME_HEIGHT, 480)
     faceCascade = cv.Load("face.xml")
+    lastPlaybackTime = 0
 
     pygame.mixer.init()
 
@@ -88,9 +89,13 @@ if __name__ == "__main__":
         cv.Flip(frame, None, 1)
         foundFace = detect_and_draw(frame, faceCascade)
         cv.ShowImage('Camera', frame)
-        if foundFace and pygame.mixer.music.get_busy() == False:
-            pygame.mixer.music.load(random_sound())
-            pygame.mixer.music.play()
+        if foundFace:
+            if pygame.mixer.music.get_busy():
+                lastPlaybackTime = time.time()
+            elif time.time() - lastPlaybackTime > 5:
+                pygame.mixer.music.load(random_sound())
+                pygame.mixer.music.play()
+
 
        # time.sleep(0.1)
 
