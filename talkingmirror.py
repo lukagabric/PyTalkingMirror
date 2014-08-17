@@ -2,6 +2,7 @@ import cv2.cv as cv
 import sys
 import time
 import pygame
+import random
 
 # Parameters for haar detection
 # From the API:
@@ -49,6 +50,16 @@ def detect_and_draw(img, faceCascade):
 
     return True if faces else False
 
+
+def random_sound():
+    rnd = random.randint(0, 1)
+    if rnd == 0:
+        return "birds.wav"
+    elif rnd == 1:
+        return "door.wav"
+
+    return "birds.wav"
+
 if __name__ == "__main__":
 
     print "Press ESC to exit ..."
@@ -63,7 +74,6 @@ if __name__ == "__main__":
     faceCascade = cv.Load("face.xml")
 
     pygame.mixer.init()
-    pygame.mixer.music.load("birds.wav")
 
     if not capture:
         print "Error opening capture device"
@@ -79,6 +89,7 @@ if __name__ == "__main__":
         foundFace = detect_and_draw(frame, faceCascade)
         cv.ShowImage('Camera', frame)
         if foundFace and pygame.mixer.music.get_busy() == False:
+            pygame.mixer.music.load(random_sound())
             pygame.mixer.music.play()
 
        # time.sleep(0.1)
