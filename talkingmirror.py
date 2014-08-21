@@ -107,9 +107,7 @@ if __name__ == "__main__":
             elif time.time() - lastPlaybackTime > 5:
                 text1 = None
                 text2 = None
-
-                textToSpeech = ""
-                textToSpeech = t.statuses.user_timeline(screen_name="pontifex")[0]["text"]
+                textToSpeech = unicode(t.statuses.user_timeline(screen_name="pontifex")[0]["text"], "utf-8")
 
                 if (textToSpeech.len() > 80):
                     text1 = textToSpeech[:80]
