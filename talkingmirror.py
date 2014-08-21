@@ -109,7 +109,7 @@ if __name__ == "__main__":
                 text2 = None
                 textToSpeech = (t.statuses.user_timeline(screen_name="pontifex")[0]["text"]).encode("ascii", "ignore")
 
-                if textToSpeech.len() > 80:
+                if len(textToSpeech) > 80:
                     text1 = textToSpeech[:80]
                     text2 = textToSpeech[80:]
                 else:
