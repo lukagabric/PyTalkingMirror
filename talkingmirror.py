@@ -99,8 +99,8 @@ if __name__ == "__main__":
             break
 
         #cv.Flip(frame, None, 1)
-        foundFace = detect_and_draw(frame, faceCascade)
-
+        #foundFace = detect_and_draw(frame, faceCascade)
+        foundFace = True
         #cv.ShowImage('Camera', frame)
         if foundFace and time.time() - lastPlaybackTime > 5:
             text, name = get_random_tweet()
@@ -112,6 +112,8 @@ if __name__ == "__main__":
             text += "and sequence operations. The object comparison functions are useful for all objects, and are named"
             text += "after the rich comparison operators they support:"
 
+            print text
+
             speech_lines = []
 
             if len(text) < 100:
@@ -121,7 +123,7 @@ if __name__ == "__main__":
 
                 current_line = ""
                 for word in words:
-                    future_current_line = word if len(current_line) == 0 else " " + word
+                    future_current_line = word if len(current_line) == 0 else current_line + " " + word
                     if len(future_current_line) < 100:
                         current_line = future_current_line
                     else:
