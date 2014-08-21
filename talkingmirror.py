@@ -138,8 +138,6 @@ if __name__ == "__main__":
                     speakCommand = "./speech.sh " + text2
                     os.system(speakCommand)
 
-                print "done"
-
        # time.sleep(0.1)
 
         # k = cv.WaitKey(100)
