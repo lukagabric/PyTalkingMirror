@@ -3,6 +3,7 @@ import sys
 import time
 import pygame
 import random
+import os
 
 # Parameters for haar detection
 # From the API:
@@ -78,6 +79,7 @@ if __name__ == "__main__":
     faceCascade = cv.Load("face.xml")
     lastPlaybackTime = 0
 
+    os.system("amixer sset PCM,0 85%")
     pygame.mixer.init()
 
     if not capture:
