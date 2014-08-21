@@ -78,7 +78,9 @@ def get_random_tweet():
     elif rnd == 2:
         username = "Inspire_Us"
 
-    return (t.statuses.user_timeline(screen_name=username)[random.randint(0, 5)]["text"]).encode("ascii", "ignore")
+    tweet = t.statuses.user_timeline(screen_name=username)[random.randint(0, 5)]
+
+    return (tweet["text"]).encode("ascii", "ignore"), (tweet["user"]["name"]).encode("ascii", "ignore")
 
 
 if __name__ == "__main__":
@@ -122,13 +124,16 @@ if __name__ == "__main__":
             elif time.time() - lastPlaybackTime > 5:
                 text1 = None
                 text2 = None
-                textToSpeech = get_random_tweet()
+                text, name = get_random_tweet()
 
-                if len(textToSpeech) > 98:
-                    text1 = textToSpeech[:98]
-                    text2 = textToSpeech[98:]
+                if len(text) > 98:
+                    text1 = text[:98]
+                    text2 = text[98:]
                 else:
-                    text1 = textToSpeech
+                    text1 = text
+
+                if text1 is not None and text2 is not None:
+                    speakCommand = ".speech.sh Tweet by " + name
 
                 if text1 is not None:
                     speakCommand = "./speech.sh " + text1
