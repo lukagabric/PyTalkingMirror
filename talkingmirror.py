@@ -97,7 +97,7 @@ if __name__ == "__main__":
         if foundFace:
             if pygame.mixer.get_init() is not None:
                 lastPlaybackTime = time.time()
-                print("lastPlaybackTime = " + lastPlaybackTime)
+                print("lastPlaybackTime = %f" % lastPlaybackTime)
             else:
                 if pygame.mixer.get_init() is not None:
                     pygame.mixer.quit()
