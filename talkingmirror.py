@@ -92,7 +92,7 @@ if __name__ == "__main__":
         foundFace = detect_and_draw(frame, faceCascade)
         #cv.ShowImage('Camera', frame)
         if foundFace:
-            if pygame.mixer.music.get_busy():
+            if pygame.mixer.get_init() is not None and pygame.mixer.music.get_busy():
                 lastPlaybackTime = time.time()
             else:
                 if pygame.mixer.get_init() is not None:
