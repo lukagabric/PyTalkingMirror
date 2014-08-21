@@ -1,7 +1,6 @@
 import cv2.cv as cv
 import sys
 import time
-import pygame
 import random
 import os
 from twitter import *
@@ -53,34 +52,19 @@ def detect_and_draw(img, faceCascade):
     return True if faces else False
 
 
-def play_random_sound():
-    rnd = random.randint(0, 1)
-
-    sound_name = ""
-    if rnd == 0:
-        sound_name = "birds.wav"
-    elif rnd == 1:
-        sound_name = "door.wav"
-
-    pygame.mixer.music.load(sound_name)
-    pygame.mixer.music.play()
-
-
 def get_random_tweet():
-    rnd = random.randint(0, 2)
-
-    username = ""
-
-    if rnd == 0:
-        username = "pontifex"
-    elif rnd == 1:
-        username = "BarackObama"
-    elif rnd == 2:
-        username = "Inspire_Us"
-
-    tweet = t.statuses.user_timeline(screen_name=username)[random.randint(0, 5)]
-
+    usernames = ["pontifex", "BarackObama", "Inspire_Us"]
+    random_index = random.randint(0, len(usernames) - 1)
+    username = usernames[random_index]
+    tweet_index = random.randint(0, 1)
+    tweet = t.statuses.user_timeline(screen_name=username)[tweet_index]
     return (tweet["text"]).encode("ascii", "ignore"), (tweet["user"]["name"]).encode("ascii", "ignore")
+
+
+def speak(text):
+    speakCommand = "./speech.sh " + text
+    print speakCommand
+    os.system(speakCommand)
 
 
 if __name__ == "__main__":
@@ -98,7 +82,6 @@ if __name__ == "__main__":
     lastPlaybackTime = 0
 
     os.system("amixer sset PCM,0 85%")
-    pygame.mixer.init()
 
     t = Twitter(auth=OAuth("42847711-00HCtUlEc4QSlE4fZ0jcRR362V5dgcIcDcz14Z5ws",
                            "VBBTmH12Fcqp9rKwBi4Szon4skESrGaA9EowBuUO3Yk",
@@ -117,34 +100,36 @@ if __name__ == "__main__":
 
         #cv.Flip(frame, None, 1)
         foundFace = detect_and_draw(frame, faceCascade)
+
         #cv.ShowImage('Camera', frame)
-        if foundFace:
-            if pygame.mixer.music.get_busy():
+        if foundFace and time.time() - lastPlaybackTime > 5:
+            text, name = get_random_tweet()
+
+            speech_lines = []
+
+            if len(text) < 100:
+                speech_lines.append(text)
+            else:
+                words = text.split()
+
+                current_line = ""
+                for word in words:
+                    future_current_line = word if len(current_line) == 0 else " " + word
+                    if len(future_current_line) < 100:
+                        current_line = future_current_line
+                    else:
+                        speech_lines.append(current_line)
+                        current_line = word
+
+            if speech_lines is not None and len(speech_lines) > 0:
+                speak("Tweet by " + name)
+
+                for line in speech_lines:
+                    speak(line)
+
                 lastPlaybackTime = time.time()
-            elif time.time() - lastPlaybackTime > 5:
-                text1 = None
-                text2 = None
-                text, name = get_random_tweet()
 
-                if len(text) > 98:
-                    text1 = text[:98]
-                    text2 = text[98:]
-                else:
-                    text1 = text
-
-                if text1 is not None or text2 is not None:
-                    speakCommand = "./speech.sh Tweet by " + name
-                    os.system(speakCommand)
-
-                if text1 is not None:
-                    speakCommand = "./speech.sh " + text1
-                    os.system(speakCommand)
-
-                if text2 is not None:
-                    speakCommand = "./speech.sh " + text2
-                    os.system(speakCommand)
-
-       # time.sleep(0.1)
+        # time.sleep(0.1)
 
         # k = cv.WaitKey(100)
         #
