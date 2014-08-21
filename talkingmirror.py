@@ -124,11 +124,15 @@ if __name__ == "__main__":
                 current_line = ""
                 for word in words:
                     future_current_line = word if len(current_line) == 0 else current_line + " " + word
+                    
                     if len(future_current_line) < 100:
                         current_line = future_current_line
                     else:
                         speech_lines.append(current_line)
                         current_line = word
+
+                    speech_lines.append(current_line)
+
 
             if speech_lines is not None and len(speech_lines) > 0:
                 speak("Tweet by " + name)
