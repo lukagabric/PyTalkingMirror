@@ -63,7 +63,7 @@ def get_random_tweet():
 
 def speak(text):
     speakCommand = './speech.sh "' + text + '"'
-    print speakCommand
+    #print speakCommand
     os.system(speakCommand)
 
 
@@ -104,8 +104,6 @@ if __name__ == "__main__":
         #cv.ShowImage('Camera', frame)
         if foundFace and time.time() - lastPlaybackTime > 5:
             text, name = get_random_tweet()
-
-            print text
 
             speech_lines = []
 
