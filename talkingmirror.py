@@ -106,7 +106,8 @@ if __name__ == "__main__":
                 lastPlaybackTime = time.time()
             elif time.time() - lastPlaybackTime > 5:
                 textToSpeech = t.statuses.user_timeline(screen_name="pontifex")[0]["text"]
-                print "textToSpeech = " + textToSpeech
+                print "textToSpeech = '" + textToSpeech + "'"
+                os.system("./speech.sh preparing text")
                 os.system("./speech.sh " + textToSpeech)
                 print "done"
 
