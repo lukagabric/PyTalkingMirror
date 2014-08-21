@@ -62,7 +62,7 @@ def get_random_tweet():
 
 
 def speak(text):
-    speakCommand = "./speech.sh " + text
+    speakCommand = './speech.sh "' + text + '"'
     print speakCommand
     os.system(speakCommand)
 
