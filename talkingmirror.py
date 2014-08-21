@@ -56,14 +56,29 @@ def detect_and_draw(img, faceCascade):
 def play_random_sound():
     rnd = random.randint(0, 1)
 
-    soundName = ""
+    sound_name = ""
     if rnd == 0:
-        soundName = "birds.wav"
+        sound_name = "birds.wav"
     elif rnd == 1:
-        soundName = "door.wav"
+        sound_name = "door.wav"
 
-    pygame.mixer.music.load(soundName)
+    pygame.mixer.music.load(sound_name)
     pygame.mixer.music.play()
+
+
+def get_random_tweet():
+    rnd = random.randint(0, 2)
+
+    username = ""
+
+    if rnd == 0:
+        username = "pontifex"
+    elif rnd == 1:
+        username = "BarackObama"
+    elif rnd == 2:
+        username = "Inspire_Us"
+
+    return (t.statuses.user_timeline(screen_name=username)[random.randint(0, 5)]["text"]).encode("ascii", "ignore")
 
 
 if __name__ == "__main__":
@@ -107,14 +122,13 @@ if __name__ == "__main__":
             elif time.time() - lastPlaybackTime > 5:
                 text1 = None
                 text2 = None
-                textToSpeech = (t.statuses.user_timeline(screen_name="pontifex")[0]["text"]).encode("ascii", "ignore")
+                textToSpeech = get_random_tweet()
 
                 if len(textToSpeech) > 98:
                     text1 = textToSpeech[:98]
                     text2 = textToSpeech[98:]
                 else:
                     text1 = textToSpeech
-
 
                 if text1 is not None:
                     speakCommand = "./speech.sh " + text1
