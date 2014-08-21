@@ -60,8 +60,6 @@ def play_random_sound():
     elif rnd == 1:
         soundName = "door.wav"
 
-    print("playing " + soundName)
-
     pygame.mixer.music.load(soundName)
     pygame.mixer.music.play()
 
@@ -98,7 +96,6 @@ if __name__ == "__main__":
         if foundFace:
             if pygame.mixer.music.get_busy():
                 lastPlaybackTime = time.time()
-                print("lastPlaybackTime = %f" % lastPlaybackTime)
             elif time.time() - lastPlaybackTime > 5:
                     play_random_sound()
 
