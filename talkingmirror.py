@@ -108,7 +108,9 @@ if __name__ == "__main__":
                 textToSpeech = t.statuses.user_timeline(screen_name="pontifex")[0]["text"]
                 print "textToSpeech = '" + textToSpeech + "'"
                 os.system("./speech.sh preparing text")
-                os.system("./speech.sh " + textToSpeech)
+                speakCommand = "./speech.sh " + textToSpeech
+                print speakCommand
+                os.system(speakCommand)
                 print "done"
 
        # time.sleep(0.1)
