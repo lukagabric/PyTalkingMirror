@@ -132,7 +132,7 @@ if __name__ == "__main__":
                 else:
                     text1 = text
 
-                if text1 is not None and text2 is not None:
+                if text1 is not None or text2 is not None:
                     speakCommand = "./speech.sh Tweet by " + name
                     print("speakCommand = '" + speakCommand + "'")
                     os.system(speakCommand)
