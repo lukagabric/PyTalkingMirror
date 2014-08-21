@@ -105,12 +105,25 @@ if __name__ == "__main__":
             if pygame.mixer.music.get_busy():
                 lastPlaybackTime = time.time()
             elif time.time() - lastPlaybackTime > 5:
+                text1 = None
+                text2 = None
                 textToSpeech = t.statuses.user_timeline(screen_name="pontifex")[0]["text"]
-                print "textToSpeech = '" + textToSpeech + "'"
-                os.system("./speech.sh preparing text")
-                speakCommand = "./speech.sh " + textToSpeech
-                print speakCommand
-                os.system(speakCommand)
+
+                if (textToSpeech.len() > 80):
+                    text1 = textToSpeech[:80]
+                    text2 = textToSpeech[80:]
+                else:
+                    text1 = textToSpeech
+
+
+                if text1 is not None:
+                    speakCommand = "./speech.sh " + text1
+                    os.system(speakCommand)
+
+                if text2 is not None:
+                    speakCommand = "./speech.sh " + text2
+                    os.system(speakCommand)
+
                 print "done"
 
        # time.sleep(0.1)
