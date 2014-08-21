@@ -62,8 +62,6 @@ def play_random_sound():
     pygame.mixer.init()
     sound = pygame.mixer.Sound(soundName)
     sound.play()
-    time.sleep(sound.get_length() + 5)
-    pygame.mixer.quit()
 
 
 if __name__ == "__main__":
@@ -94,7 +92,15 @@ if __name__ == "__main__":
         foundFace = detect_and_draw(frame, faceCascade)
         #cv.ShowImage('Camera', frame)
         if foundFace:
-            play_random_sound()
+            if pygame.mixer.music.get_busy():
+                lastPlaybackTime = time.time()
+            else:
+                if pygame.mixer.get_init() is not None:
+                    pygame.mixer.quit()
+
+                if time.time() - lastPlaybackTime > 5:
+                    play_random_sound()
+
 
        # time.sleep(0.1)
 
