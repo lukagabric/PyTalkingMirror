@@ -4,6 +4,7 @@ import time
 import pygame
 import random
 import os
+from twitter import *
 
 # Parameters for haar detection
 # From the API:
@@ -82,6 +83,11 @@ if __name__ == "__main__":
     os.system("amixer sset PCM,0 85%")
     pygame.mixer.init()
 
+    t = Twitter(auth=OAuth("42847711-00HCtUlEc4QSlE4fZ0jcRR362V5dgcIcDcz14Z5ws",
+                           "VBBTmH12Fcqp9rKwBi4Szon4skESrGaA9EowBuUO3Yk",
+                           "bgSOfSinG0KR4Yi1aP81A",
+                           "e3VzkfTzFImVwBWCLosIaK0P9Azx9ixlYAj9Q7pes"))
+
     if not capture:
         print "Error opening capture device"
         sys.exit(1)
@@ -99,8 +105,8 @@ if __name__ == "__main__":
             if pygame.mixer.music.get_busy():
                 lastPlaybackTime = time.time()
             elif time.time() - lastPlaybackTime > 5:
-                    play_random_sound()
-
+                textToSpeech = t.statuses.user_timeline(screen_name="pontifex")[0]["text"]
+                os.system("./speech.sh " + textToSpeech)
 
        # time.sleep(0.1)
 
