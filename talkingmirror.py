@@ -53,11 +53,14 @@ def detect_and_draw(img, faceCascade):
 
 def play_random_sound():
     rnd = random.randint(0, 1)
+
     soundName = ""
     if rnd == 0:
         soundName = "birds.wav"
     elif rnd == 1:
         soundName = "door.wav"
+
+    print("playing " + soundName)
 
     pygame.mixer.init()
     sound = pygame.mixer.Sound(soundName)
@@ -94,9 +97,11 @@ if __name__ == "__main__":
         if foundFace:
             if pygame.mixer.get_init() is not None and pygame.mixer.music.get_busy():
                 lastPlaybackTime = time.time()
+                print("lastPlaybackTime = " + lastPlaybackTime)
             else:
                 if pygame.mixer.get_init() is not None:
                     pygame.mixer.quit()
+                    print("pygame.mixer.quit")
 
                 if time.time() - lastPlaybackTime > 5:
                     play_random_sound()
