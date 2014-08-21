@@ -75,6 +75,8 @@ if __name__ == "__main__":
     lastPlaybackTime = 0
 
     pygame.mixer.init()
+    door = pygame.mixer.Sound("door.wav")
+    birds = pygame.mixer.Sound("birds.wav")
 
     if not capture:
         print "Error opening capture device"
@@ -93,8 +95,7 @@ if __name__ == "__main__":
             if pygame.mixer.music.get_busy():
                 lastPlaybackTime = time.time()
             elif time.time() - lastPlaybackTime > 5:
-                pygame.mixer.music.load(random_sound())
-                pygame.mixer.music.play()
+                door.play()
 
 
        # time.sleep(0.1)
