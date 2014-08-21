@@ -99,18 +99,11 @@ if __name__ == "__main__":
             break
 
         #cv.Flip(frame, None, 1)
-        #foundFace = detect_and_draw(frame, faceCascade)
-        foundFace = True
+        foundFace = detect_and_draw(frame, faceCascade)
+
         #cv.ShowImage('Camera', frame)
         if foundFace and time.time() - lastPlaybackTime > 5:
             text, name = get_random_tweet()
-            text = "The operator module exports a set of efficient functions corresponding "
-            text += "to the intrinsic operators of Python. For example, operator.add(x, y) is equivalent"
-            text += "to the expression x+y. The function names are those used for special class methods; "
-            text += "variants without leading and trailing __ are also provided for convenience. The functions "
-            text += "fall into categories that perform object comparisons, logical operations, mathematical operations"
-            text += "and sequence operations. The object comparison functions are useful for all objects, and are named"
-            text += "after the rich comparison operators they support:"
 
             print text
 
