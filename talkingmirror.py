@@ -51,14 +51,20 @@ def detect_and_draw(img, faceCascade):
     return True if faces else False
 
 
-def random_sound():
+def play_random_sound():
     rnd = random.randint(0, 1)
+    soundName = ""
     if rnd == 0:
-        return "birds.wav"
+        soundName = "birds.wav"
     elif rnd == 1:
-        return "door.wav"
+        soundName = "door.wav"
 
-    return "birds.wav"
+    pygame.mixer.init()
+    sound = pygame.mixer.Sound(soundName)
+    sound.play()
+    time.sleep(sound.get_length() + 5)
+    pygame.mixer.quit()
+
 
 if __name__ == "__main__":
 
@@ -74,10 +80,6 @@ if __name__ == "__main__":
     faceCascade = cv.Load("face.xml")
     lastPlaybackTime = 0
 
-    pygame.mixer.init()
-    door = pygame.mixer.Sound("door.wav")
-    birds = pygame.mixer.Sound("birds.wav")
-
     if not capture:
         print "Error opening capture device"
         sys.exit(1)
@@ -92,11 +94,7 @@ if __name__ == "__main__":
         foundFace = detect_and_draw(frame, faceCascade)
         #cv.ShowImage('Camera', frame)
         if foundFace:
-            if pygame.mixer.music.get_busy():
-                lastPlaybackTime = time.time()
-            elif time.time() - lastPlaybackTime > 5:
-                door.play()
-
+            play_random_sound()
 
        # time.sleep(0.1)
 
