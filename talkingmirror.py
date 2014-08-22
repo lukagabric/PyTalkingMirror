@@ -78,7 +78,46 @@ def speak(text):
         os.system(speakCommand)
 
 
+def read_random_tweet():
+    text, name = get_random_tweet()
+
+    if verbose:
+        print "Name: " + name
+        print "Text: " + text
+
+    speech_lines = []
+
+    #less than 100 characters in one iteration
+    if len(text) < 100:
+        speech_lines.append(text)
+    else:
+        #split into lines less than 100 characters long
+        words = text.split()
+
+        current_line = ""
+
+        for word in words:
+            future_current_line = word if len(current_line) == 0 else current_line + " " + word
+
+            if len(future_current_line) < 100:
+                current_line = future_current_line
+            else:
+                speech_lines.append(current_line)
+                current_line = word
+
+        speech_lines.append(current_line)
+
+    if speech_lines is not None and len(speech_lines) > 0:
+        #read the lines
+        speak("Tweet by " + name)
+
+        for line in speech_lines:
+            speak(line)
+
+
+
 if __name__ == "__main__":
+    #arguments
     parser = argparse.ArgumentParser()
     parser.add_argument("-p", "--preview", action="store_true", help="show opencv preview")
     parser.add_argument("-v", "--verbose", action="store_true", help="increase output verbosity")
@@ -89,6 +128,7 @@ if __name__ == "__main__":
     run_mode = args.runmode
 
     if opencv_preview:
+        #show window
         print "Press ESC to exit ..."
         cv.NamedWindow('Camera', cv.CV_WINDOW_AUTOSIZE)
 
@@ -100,8 +140,10 @@ if __name__ == "__main__":
     lastPlaybackTime = 0
 
     if run_mode == 0:
+        #set sound volume
         os.system("amixer sset PCM,0 85%")
 
+    #setup twitter client
     t = Twitter(auth=OAuth("42847711-00HCtUlEc4QSlE4fZ0jcRR362V5dgcIcDcz14Z5ws",
                            "VBBTmH12Fcqp9rKwBi4Szon4skESrGaA9EowBuUO3Yk",
                            "bgSOfSinG0KR4Yi1aP81A",
@@ -111,6 +153,7 @@ if __name__ == "__main__":
         print "Error opening capture device"
         sys.exit(1)
 
+    #main loop
     while True:
         frame = cv.QueryFrame(capture)
 
@@ -126,46 +169,14 @@ if __name__ == "__main__":
             cv.ShowImage('Camera', frame)
 
         if foundFace and time.time() - lastPlaybackTime > 5:
-            text, name = get_random_tweet()
-
-            if verbose:
-                print "Name: " + name
-                print "Text: " + text
-
-            speech_lines = []
-
-            if len(text) < 100:
-                speech_lines.append(text)
-            else:
-                words = text.split()
-
-                current_line = ""
-                for word in words:
-                    future_current_line = word if len(current_line) == 0 else current_line + " " + word
-
-                    if len(future_current_line) < 100:
-                        current_line = future_current_line
-                    else:
-                        speech_lines.append(current_line)
-                        current_line = word
-
-                speech_lines.append(current_line)
-
-
-            if speech_lines is not None and len(speech_lines) > 0:
-                speak("Tweet by " + name)
-
-                for line in speech_lines:
-                    speak(line)
-
-                lastPlaybackTime = time.time()
+            #read tweets with 5 seconds interval between them
+            read_random_tweet()
+            lastPlaybackTime = time.time()
 
         if opencv_preview:
-            time.sleep(0.1)
-
             k = cv.WaitKey(100)
 
             if k == 0x1b: # ESC
                 print 'ESC pressed. Exiting ...'
-                cv.DestroyWindow("Camera")  # This may not work on a Mac
+                cv.DestroyWindow("Camera")
                 break
