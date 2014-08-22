@@ -137,7 +137,7 @@ if __name__ == "__main__":
 
     if opencv_preview:
         #show window
-        print "Press ESC to exit ..."
+        print "Press ESC to exit..."
         cv.NamedWindow('Camera', cv.CV_WINDOW_AUTOSIZE)
 
     # create capture device
@@ -186,6 +186,6 @@ if __name__ == "__main__":
             k = cv.WaitKey(100)
 
             if k == 0x1b: # ESC
-                print 'ESC pressed. Exiting ...'
+                print 'ESC pressed. Exiting...'
                 cv.DestroyWindow("Camera")
                 break
