@@ -117,6 +117,11 @@ def read_random_tweet():
             speak(line)
 
 
+def clear_capture_buffer(capture):
+    for i in range(4):
+        cv.QueryFrame(capture)
+
+
 if __name__ == "__main__":
     #arguments
     parser = argparse.ArgumentParser()
@@ -169,12 +174,9 @@ if __name__ == "__main__":
         if opencv_preview:
             cv.ShowImage('Camera', frame)
 
-        if found_face and time.time() - last_playback_time > 5:
-            #read random tweets with 5 seconds interval between them
-            #not using sleep because it seems like 4 more frames have already been taken
-            #so it likely that faces are going to be detected based on that frozen buffer
+        if found_face:
             read_random_tweet()
-            last_playback_time = time.time()
+            clear_capture_buffer(capture)
 
         if opencv_preview:
             k = cv.WaitKey(100)
