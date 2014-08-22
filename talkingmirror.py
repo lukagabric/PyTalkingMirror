@@ -65,7 +65,7 @@ def get_random_tweet():
     usernames = ["pontifex", "BarackObama", "Inspire_Us"]
     random_index = random.randint(0, len(usernames) - 1)
     username = usernames[random_index]
-    tweet_index = random.randint(0, 1)
+    tweet_index = random.randint(0, 6)
     tweet = t.statuses.user_timeline(screen_name=username)[tweet_index]
     return (tweet["text"]).encode("ascii", "ignore"), (tweet["user"]["name"]).encode("ascii", "ignore")
 
