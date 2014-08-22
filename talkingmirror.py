@@ -4,6 +4,8 @@ import time
 import random
 import os
 from twitter import *
+import argparse
+
 
 # Parameters for haar detection
 # From the API:
@@ -19,6 +21,10 @@ min_neighbors = 2
 haar_flags = 0
 
 smallwidth = 90
+
+opencv_preview = False
+verbose = False
+run_mode = 0
 
 def detect_and_draw(img, faceCascade):
     gray = cv.CreateImage((img.width,img.height), 8, 1)
@@ -40,14 +46,15 @@ def detect_and_draw(img, faceCascade):
     faces = cv.HaarDetectObjects(small_img, faceCascade, cv.CreateMemStorage(0),
             haar_scale, min_neighbors, haar_flags, min_size)
 
-    # if faces:
-    #     for ((x, y, w, h), n) in faces:
-    #         # the input to cv.HaarDetectObjects was resized, so scale the
-    #         # bounding box of each face and convert it to two CvPoints
-    #         pt1 = (int(x * image_scale), int(y * image_scale))
-    #         pt2 = (int((x + w) * image_scale), int((y + h) * image_scale))
-    #         cv.Rectangle(img, pt1, pt2, cv.RGB(255, 0, 0), 3, 8, 0)
-    #         print "Face at: ", pt1[0], ",", pt2[0], "\t", pt1[1], ",", pt2[1]
+    if opencv_preview and faces:
+         for ((x, y, w, h), n) in faces:
+             # the input to cv.HaarDetectObjects was resized, so scale the
+             # bounding box of each face and convert it to two CvPoints
+             pt1 = (int(x * image_scale), int(y * image_scale))
+             pt2 = (int((x + w) * image_scale), int((y + h) * image_scale))
+             cv.Rectangle(img, pt1, pt2, cv.RGB(255, 0, 0), 3, 8, 0)
+             if verbose:
+                print "Face at: ", pt1[0], ",", pt2[0], "\t", pt1[1], ",", pt2[1]
 
     return True if faces else False
 
@@ -63,16 +70,27 @@ def get_random_tweet():
 
 def speak(text):
     speakCommand = './speech.sh "' + text + '"'
-    #print speakCommand
-    os.system(speakCommand)
+
+    if verbose:
+        print speakCommand
+
+    if run_mode == 0:
+        os.system(speakCommand)
 
 
 if __name__ == "__main__":
+    parser = argparse.ArgumentParser()
+    parser.add_argument("-p", "--preview", action="store_true", help="show opencv preview")
+    parser.add_argument("-v", "--verbose", action="store_true", help="increase output verbosity")
+    parser.add_argument("-r", "--runmode", type=int, default=0, help="run mode: 0 - Raspberry Pi; 1 - PC")
+    args = parser.parse_args()
+    opencv_preview = args.preview
+    verbose = args.verbose
+    run_mode = args.runmode
 
-    #print "Press ESC to exit ..."
-
-    # create windows
-    #cv.NamedWindow('Camera', cv.CV_WINDOW_AUTOSIZE)
+    if opencv_preview:
+        print "Press ESC to exit ..."
+        cv.NamedWindow('Camera', cv.CV_WINDOW_AUTOSIZE)
 
     # create capture device
     capture = cv.CreateCameraCapture(0) # assume we want first device
@@ -81,7 +99,8 @@ if __name__ == "__main__":
     faceCascade = cv.Load("face.xml")
     lastPlaybackTime = 0
 
-    os.system("amixer sset PCM,0 85%")
+    if run_mode == 0:
+        os.system("amixer sset PCM,0 85%")
 
     t = Twitter(auth=OAuth("42847711-00HCtUlEc4QSlE4fZ0jcRR362V5dgcIcDcz14Z5ws",
                            "VBBTmH12Fcqp9rKwBi4Szon4skESrGaA9EowBuUO3Yk",
@@ -98,12 +117,20 @@ if __name__ == "__main__":
         if frame is None:
             break
 
-        #cv.Flip(frame, None, 1)
+        if opencv_preview:
+            cv.Flip(frame, None, 1)
+
         foundFace = detect_and_draw(frame, faceCascade)
 
-        #cv.ShowImage('Camera', frame)
+        if opencv_preview:
+            cv.ShowImage('Camera', frame)
+
         if foundFace and time.time() - lastPlaybackTime > 5:
             text, name = get_random_tweet()
+
+            if verbose:
+                print "Name: " + name
+                print "Text: " + text
 
             speech_lines = []
 
@@ -133,11 +160,12 @@ if __name__ == "__main__":
 
                 lastPlaybackTime = time.time()
 
-        # time.sleep(0.1)
+        if opencv_preview:
+            time.sleep(0.1)
 
-        # k = cv.WaitKey(100)
-        #
-        # if k == 0x1b: # ESC
-        #     print 'ESC pressed. Exiting ...'
-        #     cv.DestroyWindow("Camera")  # This may not work on a Mac
-        #     break
+            k = cv.WaitKey(100)
+
+            if k == 0x1b: # ESC
+                print 'ESC pressed. Exiting ...'
+                cv.DestroyWindow("Camera")  # This may not work on a Mac
+                break
