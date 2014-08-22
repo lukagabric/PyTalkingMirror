@@ -176,6 +176,8 @@ if __name__ == "__main__":
 
         if found_face:
             read_random_tweet()
+            #buffer needs to be cleared because it stores around 4 more images of the currently captured face
+            #which would result into false detection
             clear_capture_buffer(capture)
 
         if opencv_preview:
