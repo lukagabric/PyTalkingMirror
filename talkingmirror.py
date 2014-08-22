@@ -121,7 +121,8 @@ def clear_capture_buffer(capture):
     for i in range(4):
         cv.QueryFrame(capture)
 
-def configure_arguments():
+
+if __name__ == "__main__":
     parser = argparse.ArgumentParser()
     parser.add_argument("-p", "--preview", action="store_true", help="show opencv preview")
     parser.add_argument("-v", "--verbose", action="store_true", help="increase output verbosity")
@@ -130,10 +131,6 @@ def configure_arguments():
     opencv_preview = args.preview
     verbose = args.verbose
     run_mode = args.runmode
-
-
-if __name__ == "__main__":
-    configure_arguments()
 
     if opencv_preview:
         #show window
