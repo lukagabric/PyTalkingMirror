@@ -15,18 +15,20 @@ import argparse
 # scale_factor=1.2, min_neighbors=2, flags=CV_HAAR_DO_CANNY_PRUNING,
 # min_size=<minimum possible face size
 
+#opencv
 min_size = (5,5)
 haar_scale = 1.2
 min_neighbors = 2
 haar_flags = 0
-
 smallwidth = 90
 
+#args
 opencv_preview = False
 verbose = False
 run_mode = 0
 
-def detect_and_draw(img, faceCascade):
+
+def detect_and_draw(img, face_cascade):
     gray = cv.CreateImage((img.width,img.height), 8, 1)
     image_scale = img.width / smallwidth
 
@@ -43,7 +45,7 @@ def detect_and_draw(img, faceCascade):
 
     cv.EqualizeHist(small_img, small_img)
 
-    faces = cv.HaarDetectObjects(small_img, faceCascade, cv.CreateMemStorage(0),
+    faces = cv.HaarDetectObjects(small_img, face_cascade, cv.CreateMemStorage(0),
             haar_scale, min_neighbors, haar_flags, min_size)
 
     if opencv_preview and faces:
@@ -69,13 +71,13 @@ def get_random_tweet():
 
 
 def speak(text):
-    speakCommand = './speech.sh "' + text + '"'
+    speak_command = './speech.sh "' + text + '"'
 
     if verbose:
-        print speakCommand
+        print speak_command
 
     if run_mode == 0:
-        os.system(speakCommand)
+        os.system(speak_command)
 
 
 def read_random_tweet():
@@ -115,13 +117,12 @@ def read_random_tweet():
             speak(line)
 
 
-
 if __name__ == "__main__":
     #arguments
     parser = argparse.ArgumentParser()
     parser.add_argument("-p", "--preview", action="store_true", help="show opencv preview")
     parser.add_argument("-v", "--verbose", action="store_true", help="increase output verbosity")
-    parser.add_argument("-r", "--runmode", type=int, default=0, help="run mode: 0 - Raspberry Pi; 1 - PC")
+    parser.add_argument("-r", "--runmode", type=int, default=0, help="run mode: 0 - Raspberry Pi; 1 - Mac")
     args = parser.parse_args()
     opencv_preview = args.preview
     verbose = args.verbose
@@ -136,8 +137,8 @@ if __name__ == "__main__":
     capture = cv.CreateCameraCapture(0) # assume we want first device
     cv.SetCaptureProperty(capture, cv.CV_CAP_PROP_FRAME_WIDTH, 320)
     cv.SetCaptureProperty(capture, cv.CV_CAP_PROP_FRAME_HEIGHT, 240)
-    faceCascade = cv.Load("face.xml")
-    lastPlaybackTime = 0
+    face_cascade = cv.Load("face.xml")
+    last_playback_time = 0
 
     if run_mode == 0:
         #set sound volume
@@ -163,15 +164,17 @@ if __name__ == "__main__":
         if opencv_preview:
             cv.Flip(frame, None, 1)
 
-        foundFace = detect_and_draw(frame, faceCascade)
+        found_face = detect_and_draw(frame, face_cascade)
 
         if opencv_preview:
             cv.ShowImage('Camera', frame)
 
-        if foundFace and time.time() - lastPlaybackTime > 5:
-            #read tweets with 5 seconds interval between them
+        if found_face and time.time() - last_playback_time > 5:
+            #read random tweets with 5 seconds interval between them
+            #not using sleep because it seems like 4 more frames have already been taken
+            #so it likely that faces are going to be detected based on that frozen buffer
             read_random_tweet()
-            lastPlaybackTime = time.time()
+            last_playback_time = time.time()
 
         if opencv_preview:
             k = cv.WaitKey(100)
